@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Dynamic Optical Pattern</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.11/p5.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f7f7f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      max-width: 95vw;
+      max-height: 95vh;
+      width: auto !important;
+      height: auto !important;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+
+<body>
+
+<script>
+
+let gridSize = 100;
+let cols, rows;
+let tiles = [];
+let smileys = [];
+
+let pushRadius = 180;
+let pushStrength = 75;
+let numberOfSmileys = 18;
+
+function setup() {
+  createCanvas(800, 800);
+
+  cols = int(width / gridSize);
+  rows = int(height / gridSize);
+
+  // NESTED FOR LOOPS: Create the grid
+  for (let i = 0; i < cols; i++) {
+    tiles[i] = [];
+
+    for (let j = 0; j < rows; j++) {
+      tiles[i][j] = {
+        x: i * gridSize + gridSize / 2,
+        y: j * gridSize + gridSize / 2,
+        offsetX: 0,
+        offsetY: 0,
+        rotation: (i + j) % 2 === 0 ? 0 : HALF_PI
+      };
+    }
+  }
+
+  // RANDOM: Create floating smiley faces
+  for (let i = 0; i < numberOfSmileys; i++) {
+    smileys.push({
+      x: random(width),
+      y: random(height),
+      size: random(25, 60),
+      speedX: random(-0.6, 0.6),
+      speedY: random(-0.4, 0.4),
+      phase: random(TWO_PI),
+      color: i % 2 === 0 ? "#111111" : "#FFFFFF"
+    });
+  }
+}
+
+function draw() {
+  background("#f7f7f5");
+
+  let mouseInside =
+    mouseX >= 0 && mouseX <= width &&
+    mouseY >= 0 && mouseY <= height;
+
+  // NESTED FOR LOOPS: Draw the animated pattern
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+
+      let tile = tiles[i][j];
+
+      let d = dist(
+        mouseX, mouseY,
+        tile.x, tile.y
+      );
+
+      let targetX = 0;
+      let targetY = 0;
+
+      let beingTouched = mouseInside && d < pushRadius;
+
+      // IF/ELSE: Push arcs away from mouse
+      if (beingTouched) {
+        let angle = atan2(
+          tile.y - mouseY,
+          tile.x - mouseX
+        );
+
+        // MAP: Control the push distance
+        let force = map(
+          d, 0, pushRadius,
+          pushStrength, 0
+        );
+
+        targetX = cos(angle) * force;
+        targetY = sin(angle) * force;
+
+      } else {
+        // Rotate when mouse is not nearby
+        let direction =
+          (i + j) % 2 === 0 ? 1 : -1;
+
+        tile.rotation += 0.008 * direction;
+      }
+
+      // Smoothly move arcs back into position
+      tile.offsetX = lerp(tile.offsetX, targetX, 0.12);
+      tile.offsetY = lerp(tile.offsetY, targetY, 0.12);
+
+      push();
+
+      // TRANSLATE: Position each pattern
+      translate(
+        tile.x + tile.offsetX,
+        tile.y + tile.offsetY
+      );
+
+      // ROTATE: Animate each pattern
+      rotate(tile.rotation);
+
+      // MODULO: Alternate red and black
+      let arcColor;
+
+      if ((i + j) % 2 === 0) {
+        arcColor = "#D71920";
+      } else {
+        arcColor = "#111111";
+      }
+
+      // FRAMECOUNT + SIN: Subtle pulsing
+      let pulse = map(
+        sin(frameCount * 0.02 + i + j),
+        -1, 1,
+        0.95, 1.05
+      );
+
+      // SCALE: Change the size slightly
+      scale(pulse);
+
+      noFill();
+      stroke(arcColor);
+      strokeWeight(5);
+
+      translate(-gridSize / 2, -gridSize / 2);
+
+      // Draw nested quarter-circle arcs
+      for (let r = 10; r <= gridSize; r += 10) {
+        arc(
+          0, 0,
+          r * 2, r * 2,
+          0, HALF_PI
+        );
+      }
+
+      pop();
+    }
+  }
+
+  // FLOATING SMILEY FACES
+  for (let smiley of smileys) {
+
+    smiley.x += smiley.speedX;
+    smiley.y += smiley.speedY;
+
+    let bob = sin(
+      frameCount * 0.025 + smiley.phase
+    ) * 8;
+
+    // Wrap around the canvas
+    if (smiley.x < -smiley.size) {
+      smiley.x = width + smiley.size;
+    }
+
+    if (smiley.x > width + smiley.size) {
+      smiley.x = -smiley.size;
+    }
+
+    if (smiley.y < -smiley.size) {
+      smiley.y = height + smiley.size;
+    }
+
+    if (smiley.y > height + smiley.size) {
+      smiley.y = -smiley.size;
+    }
+
+    push();
+
+    translate(smiley.x, smiley.y + bob);
+
+    // Gently rotate smiley faces
+    rotate(
+      sin(frameCount * 0.01 + smiley.phase) * 0.2
+    );
+
+    drawSmiley(smiley.size, smiley.color);
+
+    pop();
+  }
+}
+
+// DRAW SMILEY FACE
+function drawSmiley(size, faceColor) {
+
+  let isBlack = faceColor === "#111111";
+
+  stroke(isBlack ? "#FFFFFF" : "#111111");
+  strokeWeight(2);
+  fill(faceColor);
+
+  circle(0, 0, size);
+
+  // Eyes
+  noStroke();
+  fill(isBlack ? "#FFFFFF" : "#111111");
+
+  circle(
+    -size * 0.17,
+    -size * 0.12,
+    size * 0.09
+  );
+
+  circle(
+    size * 0.17,
+    -size * 0.12,
+    size * 0.09
+  );
+
+  // Smile
+  noFill();
+  stroke(isBlack ? "#FFFFFF" : "#111111");
+  strokeWeight(size * 0.055);
+  strokeCap(ROUND);
+
+  arc(
+    0,
+    size * 0.02,
+    size * 0.5,
+    size * 0.4,
+    0,
+    PI
+  );
+}
+
+// SAVE DESIGN
+function keyPressed() {
+  if (key === "s" || key === "S") {
+    saveCanvas("dynamic-optical-pattern", "png");
+  }
+}
+
+</script>
+
+</body>
+</html>

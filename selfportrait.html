@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Photography Self-Portrait</title>
+
+  <!-- Load p5.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.11/p5.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #eeeeee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      display: block;
+      max-width: 95vw;
+      max-height: 95vh;
+      width: auto !important;
+      height: auto !important;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+    }
+  </style>
+
+</head>
+
+<body>
+
+<script>
+
+let cameraAngle = 0;
+let targetAngle = 0;
+let flashOpacity = 0;
+let tiltDirection = 1;
+
+let lensColors = [
+  "#E63946",
+  "#F4A261",
+  "#2A9D8F",
+  "#457B9D",
+  "#9B5DE5",
+  "#F72585"
+];
+
+let lensColor;
+
+function setup() {
+  createCanvas(800, 800);
+
+  angleMode(DEGREES);
+  rectMode(CENTER);
+  textAlign(CENTER);
+
+  lensColor = random(lensColors);
+}
+
+function draw() {
+  background(235);
+
+  // Background grid
+  stroke(205);
+  strokeWeight(1);
+
+  for (let x = 0; x < width; x += 40) {
+    line(x, 0, x, height);
+  }
+
+  for (let y = 0; y < height; y += 40) {
+    line(0, y, width, y);
+  }
+
+  // Title
+  noStroke();
+  fill(20);
+  textStyle(BOLD);
+  textSize(30);
+  text("LIFE THROUGH MY LENS", 400, 120);
+
+  textStyle(NORMAL);
+  textSize(14);
+  text("A PHOTOGRAPHY SELF-PORTRAIT", 400, 150);
+
+  // Smooth camera rotation
+  cameraAngle = lerp(cameraAngle, targetAngle, 0.08);
+
+  push();
+
+  translate(width / 2, height / 2 + 40);
+  rotate(cameraAngle);
+
+  drawCamera();
+
+  pop();
+
+  // Instructions
+  noStroke();
+  fill(30);
+  textSize(16);
+  text("CLICK TO TAKE A PHOTO", 400, 710);
+
+  // White flash overlay
+  if (flashOpacity > 0) {
+    push();
+
+    rectMode(CORNER);
+    noStroke();
+    fill(255, flashOpacity);
+    rect(0, 0, width, height);
+
+    pop();
+
+    flashOpacity = max(0, flashOpacity - 5);
+  }
+}
+
+function drawCamera() {
+  push();
+
+  rectMode(CENTER);
+
+  // Camera shadow
+  noStroke();
+  fill(150, 80);
+  ellipse(15, 165, 430, 50);
+
+  // Camera top
+  fill(25);
+  stroke(0);
+  strokeWeight(4);
+  rect(-90, -145, 140, 65, 12);
+
+  // Camera body
+  fill(35);
+  stroke(0);
+  strokeWeight(5);
+  rect(0, 0, 440, 280, 25);
+
+  // Camera grip
+  noStroke();
+  fill(55);
+  rect(-175, 0, 65, 250, 12);
+
+  // Camera flash
+  fill(245);
+  stroke(20);
+  strokeWeight(3);
+  rect(140, -105, 70, 35, 5);
+
+  // Small button
+  noStroke();
+  fill(100);
+  circle(-170, -105, 18);
+
+  fill(220);
+  circle(-170, -105, 8);
+
+  // Outer lens
+  stroke(10);
+  strokeWeight(8);
+  fill(70);
+  circle(30, 5, 245);
+
+  // Inner lens ring
+  stroke(150);
+  strokeWeight(5);
+  fill(15);
+  circle(30, 5, 205);
+
+  // Colorful lens
+  noStroke();
+  fill(lensColor);
+  circle(30, 5, 165);
+
+  // Dark lens center
+  fill(10, 180);
+  circle(30, 5, 110);
+
+  // Lens reflections
+  noStroke();
+  fill(255, 110);
+  ellipse(0, -30, 40, 25);
+
+  fill(255, 70);
+  circle(70, 45, 20);
+
+  // Camera label
+  noStroke();
+  fill(255);
+  textSize(13);
+  textStyle(BOLD);
+  text("CAPTURE", -95, 115);
+
+  pop();
+}
+
+// CLICK INTERACTION
+function mousePressed() {
+
+  if (
+    mouseX >= 0 &&
+    mouseX <= width &&
+    mouseY >= 0 &&
+    mouseY <= height
+  ) {
+
+    // White flash at 50% opacity
+    flashOpacity = 127;
+
+    // Change lens color
+    lensColor = random(lensColors);
+
+    // Tilt camera left or right
+    tiltDirection *= -1;
+    targetAngle = tiltDirection * 12;
+  }
+}
+
+</script>
+
+</body>
+</html>
+
