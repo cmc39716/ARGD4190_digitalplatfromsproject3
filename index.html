@@ -41,6 +41,29 @@
 
 <script>
 
+
+
+<header class="creative-coding-header">
+
+  <a href="creativecoding.html" class="creative-coding-logo">
+    CREATIVE CODING
+  </a>
+
+  <nav class="creative-coding-nav">
+
+    <a href="#optical-pattern" class="creative-nav-link active">
+      OPTICAL PATTERN
+    </a>
+
+    <a href="#self-portrait" class="creative-nav-link">
+      SELF PORTRAIT
+    </a>
+
+  </nav>
+
+</header>
+
+
 let gridSize = 100;
 let cols, rows;
 let tiles = [];
@@ -281,3 +304,98 @@ function keyPressed() {
 
 </body>
 </html>
+
+
+
+/* =====================================
+   CREATIVE CODING HEADER
+===================================== */
+
+.creative-coding-header {
+  width: 100%;
+  min-height: 105px;
+  padding: 0 3%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  background: #f8f8f6;
+  border-bottom: 1px solid #dedede;
+  box-sizing: border-box;
+}
+
+/* LEFT TITLE */
+
+.creative-coding-logo {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  color: #111;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* RIGHT NAVIGATION */
+
+.creative-coding-nav {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+/* NAVIGATION LINKS */
+
+.creative-nav-link {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #111;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+/* ACTIVE LINK */
+
+.creative-nav-link.active {
+  color: #e31820;
+}
+
+/* HOVER */
+
+.creative-nav-link:hover {
+  color: #e31820;
+}
+
+/* =====================================
+   RESPONSIVE HEADER
+===================================== */
+
+@media (max-width: 700px) {
+
+  .creative-coding-header {
+    padding: 24px 5%;
+    min-height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .creative-coding-logo {
+    font-size: 22px;
+  }
+
+  .creative-coding-nav {
+    width: 100%;
+    gap: 25px;
+    flex-wrap: wrap;
+  }
+
+  .creative-nav-link {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+}
