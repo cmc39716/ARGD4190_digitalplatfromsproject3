@@ -1,0 +1,606 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Game Day Poster Generator</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.11/p5.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f7f7f5;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111;
+    }
+
+    /* NAVIGATION */
+
+    .site-header {
+      width: 100%;
+      min-height: 75px;
+      padding: 15px 45px;
+      background: #f7f7f5;
+      border-bottom: 1px solid #dededb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .site-logo {
+      color: #111;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .site-nav {
+      display: flex;
+      gap: 35px;
+    }
+
+    .site-nav a {
+      color: #111;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .site-nav a:hover,
+    .site-nav a.active {
+      color: #D71920;
+    }
+
+    /* MAIN LAYOUT */
+
+    .generator-section {
+      max-width: 1400px;
+      margin: auto;
+      padding: 50px 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 600px) minmax(260px, 340px);
+      justify-content: center;
+      align-items: start;
+      gap: 60px;
+    }
+
+    .canvas-container {
+      width: 100%;
+    }
+
+    .canvas-container canvas {
+      display: block;
+      width: 100% !important;
+      height: auto !important;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+    }
+
+    /* CONTROLS */
+
+    .controls {
+      padding-top: 10px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: #D71920;
+      margin-bottom: 12px;
+    }
+
+    .controls h1 {
+      font-size: 40px;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin: 0 0 18px;
+    }
+
+    .description {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #666;
+      margin-bottom: 35px;
+    }
+
+    .control-group {
+      margin-bottom: 25px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+      accent-color: #D71920;
+      cursor: pointer;
+    }
+
+    .control-group input[type="color"] {
+      width: 100%;
+      height: 45px;
+      padding: 3px;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+    }
+
+    .control-group select {
+      width: 100%;
+      padding: 14px;
+      background: white;
+      border: 1px solid #ddd;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .value {
+      float: right;
+      color: #888;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 35px;
+    }
+
+    .buttons button {
+      width: 100%;
+      padding: 17px;
+      border: none;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #surpriseButton {
+      background: #111;
+      color: white;
+    }
+
+    #surpriseButton:hover {
+      background: #D71920;
+    }
+
+    #exportButton {
+      background: #D71920;
+      color: white;
+    }
+
+    #exportButton:hover {
+      background: #111;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 850px) {
+      .generator-section {
+        grid-template-columns: 1fr;
+        max-width: 650px;
+        padding: 25px 20px;
+        gap: 35px;
+      }
+
+      .controls {
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .site-header {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+      }
+
+      .site-logo {
+        font-size: 15px;
+      }
+
+      .site-nav {
+        gap: 15px;
+      }
+
+      .site-nav a {
+        font-size: 10px;
+      }
+
+      .controls h1 {
+        font-size: 34px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <a href="index.html" class="site-logo">
+      CREATIVE CODING
+    </a>
+
+    <nav class="site-nav">
+
+      <a href="index.html">
+        Optical Pattern
+      </a>
+
+      <a href="selfportrait.html">
+        Self Portrait
+      </a>
+
+      <a href="gameday.html" class="active">
+        Poster Generator
+      </a>
+
+    </nav>
+
+  </header>
+
+  <!-- GENERATOR -->
+
+  <main class="generator-section">
+
+    <div id="canvas-container" class="canvas-container"></div>
+
+    <aside class="controls">
+
+      <div class="eyebrow">GENERATIVE DESIGN / 003</div>
+
+      <h1>GAME DAY<br>GENERATOR.</h1>
+
+      <p class="description">
+        Create your own sports-inspired poster.
+        Customize the colors, patterns, shapes,
+        and composition. Every design is unique.
+      </p>
+
+      <div class="control-group">
+        <label for="teamColor">TEAM COLOR</label>
+        <input type="color" id="teamColor" value="#BA0C2F">
+      </div>
+
+      <div class="control-group">
+        <label for="sport">CHOOSE YOUR SPORT</label>
+        <select id="sport">
+          <option value="FOOTBALL">FOOTBALL</option>
+          <option value="BASKETBALL">BASKETBALL</option>
+          <option value="BASEBALL">BASEBALL</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="density">
+          PATTERN DENSITY
+          <span class="value" id="densityValue">8</span>
+        </label>
+        <input type="range" id="density"
+               min="3" max="15" value="8">
+      </div>
+
+      <div class="control-group">
+        <label for="shapeSize">
+          SHAPE SIZE
+          <span class="value" id="sizeValue">45</span>
+        </label>
+        <input type="range" id="shapeSize"
+               min="15" max="90" value="45">
+      </div>
+
+      <div class="control-group">
+        <label for="rotation">
+          ROTATION
+          <span class="value" id="rotationValue">25°</span>
+        </label>
+        <input type="range" id="rotation"
+               min="0" max="180" value="25">
+      </div>
+
+      <div class="buttons">
+
+        <button id="surpriseButton">
+          SURPRISE ME ↗
+        </button>
+
+        <button id="exportButton">
+          EXPORT POSTER ↓
+        </button>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- P5.JS -->
+
+  <script>
+
+    let colorPicker;
+    let densitySlider;
+    let sizeSlider;
+    let rotationSlider;
+    let sportSelect;
+
+    let patternSeed = 10;
+
+    function setup() {
+
+      let canvas = createCanvas(600, 750);
+      canvas.parent("canvas-container");
+
+      pixelDensity(1);
+
+      colorPicker = select("#teamColor");
+      densitySlider = select("#density");
+      sizeSlider = select("#shapeSize");
+      rotationSlider = select("#rotation");
+      sportSelect = select("#sport");
+
+      select("#surpriseButton").mousePressed(surprise);
+
+      select("#exportButton").mousePressed(() => {
+        saveCanvas("gameday-poster", "png");
+      });
+
+      densitySlider.input(updateLabels);
+      sizeSlider.input(updateLabels);
+      rotationSlider.input(updateLabels);
+
+      updateLabels();
+
+      noLoop();
+
+      colorPicker.input(redraw);
+      densitySlider.input(redraw);
+      sizeSlider.input(redraw);
+      rotationSlider.input(redraw);
+      sportSelect.changed(redraw);
+    }
+
+    function updateLabels() {
+
+      select("#densityValue").html(densitySlider.value());
+
+      select("#sizeValue").html(sizeSlider.value());
+
+      select("#rotationValue").html(rotationSlider.value() + "°");
+    }
+
+    function draw() {
+
+      randomSeed(patternSeed);
+
+      let teamColor = color(colorPicker.value());
+      let density = Number(densitySlider.value());
+      let shapeSize = Number(sizeSlider.value());
+      let angle = Number(rotationSlider.value());
+      let sport = sportSelect.value();
+
+      background(245, 243, 237);
+
+      // POSTER BACKGROUND
+
+      noStroke();
+      fill(teamColor);
+      rect(25, 25, 550, 700);
+
+      // GEOMETRIC PATTERN
+
+      push();
+
+      drawingContext.save();
+      drawingContext.beginPath();
+      drawingContext.rect(40, 145, 520, 420);
+      drawingContext.clip();
+
+      let spacing = 520 / density;
+
+      for (let x = 40; x < 560; x += spacing) {
+
+        for (let y = 145; y < 565; y += spacing) {
+
+          push();
+
+          translate(
+            x + spacing / 2,
+            y + spacing / 2
+          );
+
+          rotate(radians(angle + random(-30, 30)));
+
+          noFill();
+          stroke(255, 230);
+          strokeWeight(2);
+
+          let s = shapeSize * random(0.6, 1.4);
+          let type = floor(random(3));
+
+          if (type === 0) {
+
+            ellipse(0, 0, s, s);
+
+          } else if (type === 1) {
+
+            rectMode(CENTER);
+            rect(0, 0, s, s);
+
+          } else {
+
+            line(-s / 2, 0, s / 2, 0);
+            line(0, -s / 2, 0, s / 2);
+
+          }
+
+          pop();
+        }
+      }
+
+      drawingContext.restore();
+      pop();
+
+      // TOP LABEL
+
+      noStroke();
+      fill(255);
+
+      textFont("Helvetica");
+      textStyle(BOLD);
+      textSize(15);
+      textAlign(LEFT);
+
+      text("THE GAME DAY COLLECTION", 48, 67);
+
+      stroke(255);
+      strokeWeight(2);
+      line(48, 85, 552, 85);
+
+      // SPORT HEADLINE
+
+      noStroke();
+      fill(255);
+      textAlign(CENTER);
+      textStyle(BOLD);
+
+      let headlineSize = sport === "BASKETBALL" ? 56 : 72;
+
+      textSize(headlineSize);
+      text(sport, 300, 132);
+
+      // CENTRAL SPORTS GRAPHIC
+
+      push();
+
+      translate(300, 355);
+      rotate(radians(angle / 5));
+
+      fill(245, 243, 237);
+      stroke(0);
+      strokeWeight(5);
+
+      if (sport === "FOOTBALL") {
+
+        ellipse(0, 0, 250, 145);
+
+        line(0, -55, 0, 55);
+
+        for (let i = -3; i <= 3; i++) {
+          line(-18, i * 13, 18, i * 13);
+        }
+
+      } else if (sport === "BASKETBALL") {
+
+        ellipse(0, 0, 230, 230);
+
+        line(-115, 0, 115, 0);
+        line(0, -115, 0, 115);
+
+        noFill();
+
+        arc(-115, 0, 140, 180, -HALF_PI, HALF_PI);
+        arc(115, 0, 140, 180, HALF_PI, PI + HALF_PI);
+
+      } else if (sport === "BASEBALL") {
+
+        ellipse(0, 0, 230, 230);
+
+        noFill();
+
+        arc(-85, 0, 110, 190, -HALF_PI, HALF_PI);
+        arc(85, 0, 110, 190, HALF_PI, PI + HALF_PI);
+
+      }
+
+      pop();
+
+      // BOTTOM HEADLINE
+
+      noStroke();
+      fill(255);
+      textAlign(CENTER);
+      textStyle(BOLD);
+
+      textSize(68);
+      text("GAME DAY", 300, 645);
+
+      textSize(14);
+      textStyle(NORMAL);
+
+      text(
+        "BUILT FOR THE MOMENT / MADE TO COMPETE",
+        300,
+        685
+      );
+
+      // FOOTER
+
+      textSize(12);
+      textAlign(LEFT);
+      text("001 / ATHLETICS", 48, 710);
+
+      textAlign(RIGHT);
+      text("EST. 2026", 552, 710);
+    }
+
+    // RANDOM GENERATOR
+
+    function surprise() {
+
+      let colors = [
+        "#BA0C2F",
+        "#14213D",
+        "#E76F51",
+        "#2A9D8F",
+        "#7B2CBF",
+        "#111111",
+        "#FF6B00",
+        "#006633"
+      ];
+
+      colorPicker.value(random(colors));
+
+      densitySlider.value(floor(random(3, 16)));
+      sizeSlider.value(floor(random(15, 91)));
+      rotationSlider.value(floor(random(0, 181)));
+
+      sportSelect.value(random([
+        "FOOTBALL",
+        "BASKETBALL",
+        "BASEBALL"
+      ]));
+
+      patternSeed = floor(random(100000));
+
+      updateLabels();
+      redraw();
+    }
+
+  </script>
+
+</body>
+</html>
+
