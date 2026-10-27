@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,7 +7,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-  <title>Dynamic Optical Pattern</title>
+  <title>Dynamic Optical Pattern | Creative Coding</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.11/p5.min.js"></script>
 
@@ -24,96 +23,94 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    /* NAVIGATION HEADER */
-    .site-header {
+    /* HEADER */
+
+    .creative-coding-header {
       width: 100%;
-      height: 75px;
-      padding: 0 45px;
-      background: #f7f7f5;
-      border-bottom: 1px solid #dededb;
+      min-height: 105px;
+      padding: 25px 5%;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+      border-bottom: 1px solid #d9d9d9;
+      background: #f7f7f5;
     }
 
-    .site-logo {
-      color: #111111;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+    .creative-coding-logo {
+      color: #111;
       text-decoration: none;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
     }
 
-    .site-nav {
+    .creative-coding-nav {
       display: flex;
       align-items: center;
       gap: 35px;
     }
 
-    .site-nav a {
-      color: #111111;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    .creative-nav-link {
+      color: #111;
       text-decoration: none;
-      transition: color 0.25s ease;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      transition: color 0.2s ease;
     }
 
-    .site-nav a:hover {
-      color: #D71920;
+    .creative-nav-link:hover,
+    .creative-nav-link.active {
+      color: #d71920;
     }
 
-    .site-nav a.active {
-      color: #D71920;
-    }
+    /* PATTERN */
 
-    /* CANVAS SECTION */
-    .canvas-section {
-      min-height: calc(100vh - 75px);
+    .optical-pattern-page {
+      width: 100%;
+      padding: 55px 20px 90px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 30px;
     }
 
-    canvas {
+    #pattern-container {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    #pattern-container canvas {
       display: block;
-      max-width: 95vw;
-      max-height: calc(100vh - 135px);
-      width: auto !important;
+      width: 100% !important;
       height: auto !important;
       box-shadow: 0 15px 50px rgba(0,0,0,0.08);
     }
 
     /* MOBILE */
-    @media (max-width: 600px) {
-      .site-header {
-        height: 70px;
-        padding: 0 20px;
+
+    @media (max-width: 700px) {
+      .creative-coding-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 25px 6%;
+        gap: 20px;
       }
 
-      .site-logo {
-        font-size: 15px;
+      .creative-coding-logo {
+        font-size: 22px;
       }
 
-      .site-nav {
-        gap: 15px;
+      .creative-coding-nav {
+        gap: 20px;
+        flex-wrap: wrap;
       }
 
-      .site-nav a {
-        font-size: 10px;
-        letter-spacing: 0.5px;
+      .creative-nav-link {
+        font-size: 11px;
       }
 
-      .canvas-section {
-        min-height: calc(100vh - 70px);
-        padding: 15px;
-      }
-
-      canvas {
-        max-width: 100%;
-        max-height: calc(100vh - 100px);
+      .optical-pattern-page {
+        padding: 30px 12px 60px;
       }
     }
   </style>
@@ -121,389 +118,287 @@
 
 <body>
 
-  <!-- HEADER -->
-  <header class="site-header">
+  <!-- WEBSITE HEADER -->
 
-    <a href="index.html" class="site-logo">
+  <header class="creative-coding-header">
+
+    <a href="index.html" class="creative-coding-logo">
       CREATIVE CODING
     </a>
 
-    <nav class="site-nav">
-      <a href="index.html" class="active">
-        Optical Pattern
+    <nav class="creative-coding-nav">
+
+      <a href="index.html"
+         class="creative-nav-link active">
+        OPTICAL PATTERN
       </a>
 
-      <a href="selfportrait.html">
-        Self Portrait
+      <a href="selfportrait.html"
+         class="creative-nav-link">
+        SELF PORTRAIT
       </a>
+
+      <a href="Generativedesign.html"
+         class="creative-nav-link">
+        GENERATIVE DESIGN
+      </a>
+
     </nav>
 
   </header>
 
-  <!-- ANIMATED CANVAS -->
-  <main class="canvas-section" id="canvas-container">
+  <!-- OPTICAL PATTERN -->
+
+  <main class="optical-pattern-page">
+    <div id="pattern-container"></div>
   </main>
 
-<script>
+  <!-- P5.JS SKETCH -->
 
+  <script>
 
+    let gridSize = 100;
+    let cols, rows;
+    let tiles = [];
+    let smileys = [];
 
-<header class="creative-coding-header">
+    let pushRadius = 180;
+    let pushStrength = 75;
+    let numberOfSmileys = 18;
 
-  <a href="creativecoding.html" class="creative-coding-logo">
-    CREATIVE CODING
-  </a>
+    function setup() {
+      let canvas = createCanvas(800, 800);
+      canvas.parent("pattern-container");
 
-  <nav class="creative-coding-nav">
+      cols = int(width / gridSize);
+      rows = int(height / gridSize);
 
-    <a href="#optical-pattern" class="creative-nav-link active">
-      OPTICAL PATTERN
-    </a>
+      // Create the grid
+      for (let i = 0; i < cols; i++) {
+        tiles[i] = [];
 
-    <a href="#self-portrait" class="creative-nav-link">
-      SELF PORTRAIT
-    </a>
+        for (let j = 0; j < rows; j++) {
+          tiles[i][j] = {
+            x: i * gridSize + gridSize / 2,
+            y: j * gridSize + gridSize / 2,
+            offsetX: 0,
+            offsetY: 0,
+            rotation: (i + j) % 2 === 0
+              ? 0 : HALF_PI
+          };
+        }
+      }
 
-  </nav>
-
-</header>
-
-
-let gridSize = 100;
-let cols, rows;
-let tiles = [];
-let smileys = [];
-
-let pushRadius = 180;
-let pushStrength = 75;
-let numberOfSmileys = 18;
-
-function setup() {
-  let cnv = createCanvas(800, 800);
-
-  // Place canvas inside its own section
-  cnv.parent("canvas-container");
-
-  cols = int(width / gridSize);
-  rows = int(height / gridSize);
-
-  // NESTED FOR LOOPS: Create the grid
-  for (let i = 0; i < cols; i++) {
-    tiles[i] = [];
-
-    for (let j = 0; j < rows; j++) {
-      tiles[i][j] = {
-        x: i * gridSize + gridSize / 2,
-        y: j * gridSize + gridSize / 2,
-        offsetX: 0,
-        offsetY: 0,
-        rotation: (i + j) % 2 === 0 ? 0 : HALF_PI
-      };
+      // Create floating smiley faces
+      for (let i = 0; i < numberOfSmileys; i++) {
+        smileys.push({
+          x: random(width),
+          y: random(height),
+          size: random(25, 60),
+          speedX: random(-0.6, 0.6),
+          speedY: random(-0.4, 0.4),
+          phase: random(TWO_PI),
+          color: i % 2 === 0
+            ? "#111111" : "#FFFFFF"
+        });
+      }
     }
-  }
 
-  // RANDOM: Create floating smiley faces
-  for (let i = 0; i < numberOfSmileys; i++) {
-    smileys.push({
-      x: random(width),
-      y: random(height),
-      size: random(25, 60),
-      speedX: random(-0.6, 0.6),
-      speedY: random(-0.4, 0.4),
-      phase: random(TWO_PI),
-      color: i % 2 === 0 ? "#111111" : "#FFFFFF"
-    });
-  }
-}
+    function draw() {
+      background("#f7f7f5");
 
-function draw() {
-  background("#f7f7f5");
+      let mouseInside =
+        mouseX >= 0 && mouseX <= width &&
+        mouseY >= 0 && mouseY <= height;
 
-  let mouseInside =
-    mouseX >= 0 && mouseX <= width &&
-    mouseY >= 0 && mouseY <= height;
+      // Draw animated pattern
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
 
-  // NESTED FOR LOOPS: Draw the animated pattern
-  for (let i = 0; i < cols; i++) {
-    for (let j = 0; j < rows; j++) {
+          let tile = tiles[i][j];
 
-      let tile = tiles[i][j];
+          let d = dist(
+            mouseX, mouseY,
+            tile.x, tile.y
+          );
 
-      let d = dist(
-        mouseX, mouseY,
-        tile.x, tile.y
-      );
+          let targetX = 0;
+          let targetY = 0;
 
-      let targetX = 0;
-      let targetY = 0;
+          let beingTouched =
+            mouseInside && d < pushRadius;
 
-      let beingTouched = mouseInside && d < pushRadius;
+          if (beingTouched) {
+            let angle = atan2(
+              tile.y - mouseY,
+              tile.x - mouseX
+            );
 
-      // IF/ELSE: Push arcs away from mouse
-      if (beingTouched) {
-        let angle = atan2(
-          tile.y - mouseY,
-          tile.x - mouseX
-        );
+            let force = map(
+              d, 0, pushRadius,
+              pushStrength, 0
+            );
 
-        // MAP: Control the push distance
-        let force = map(
-          d, 0, pushRadius,
-          pushStrength, 0
-        );
+            targetX = cos(angle) * force;
+            targetY = sin(angle) * force;
 
-        targetX = cos(angle) * force;
-        targetY = sin(angle) * force;
+          } else {
+            let direction =
+              (i + j) % 2 === 0 ? 1 : -1;
 
-      } else {
-        // Rotate when mouse is not nearby
-        let direction =
-          (i + j) % 2 === 0 ? 1 : -1;
+            tile.rotation += 0.008 * direction;
+          }
 
-        tile.rotation += 0.008 * direction;
+          tile.offsetX = lerp(
+            tile.offsetX, targetX, 0.12
+          );
+
+          tile.offsetY = lerp(
+            tile.offsetY, targetY, 0.12
+          );
+
+          push();
+
+          translate(
+            tile.x + tile.offsetX,
+            tile.y + tile.offsetY
+          );
+
+          rotate(tile.rotation);
+
+          let arcColor;
+
+          if ((i + j) % 2 === 0) {
+            arcColor = "#D71920";
+          } else {
+            arcColor = "#111111";
+          }
+
+          let pulse = map(
+            sin(frameCount * 0.02 + i + j),
+            -1, 1,
+            0.95, 1.05
+          );
+
+          scale(pulse);
+
+          noFill();
+          stroke(arcColor);
+          strokeWeight(5);
+
+          translate(
+            -gridSize / 2,
+            -gridSize / 2
+          );
+
+          // Draw nested quarter-circle arcs
+          for (let r = 10; r <= gridSize; r += 10) {
+            arc(
+              0, 0,
+              r * 2, r * 2,
+              0, HALF_PI
+            );
+          }
+
+          pop();
+        }
       }
 
-      // Smoothly move arcs back into position
-      tile.offsetX = lerp(tile.offsetX, targetX, 0.12);
-      tile.offsetY = lerp(tile.offsetY, targetY, 0.12);
+      // Floating smiley faces
+      for (let smiley of smileys) {
 
-      push();
+        smiley.x += smiley.speedX;
+        smiley.y += smiley.speedY;
 
-      // TRANSLATE: Position each pattern
-      translate(
-        tile.x + tile.offsetX,
-        tile.y + tile.offsetY
-      );
+        let bob = sin(
+          frameCount * 0.025 + smiley.phase
+        ) * 8;
 
-      // ROTATE: Animate each pattern
-      rotate(tile.rotation);
+        if (smiley.x < -smiley.size) {
+          smiley.x = width + smiley.size;
+        }
 
-      // MODULO: Alternate red and black
-      let arcColor;
+        if (smiley.x > width + smiley.size) {
+          smiley.x = -smiley.size;
+        }
 
-      if ((i + j) % 2 === 0) {
-        arcColor = "#D71920";
-      } else {
-        arcColor = "#111111";
+        if (smiley.y < -smiley.size) {
+          smiley.y = height + smiley.size;
+        }
+
+        if (smiley.y > height + smiley.size) {
+          smiley.y = -smiley.size;
+        }
+
+        push();
+
+        translate(smiley.x, smiley.y + bob);
+
+        rotate(
+          sin(frameCount * 0.01 + smiley.phase) * 0.2
+        );
+
+        drawSmiley(smiley.size, smiley.color);
+
+        pop();
       }
+    }
 
-      // FRAMECOUNT + SIN: Subtle pulsing
-      let pulse = map(
-        sin(frameCount * 0.02 + i + j),
-        -1, 1,
-        0.95, 1.05
+    function drawSmiley(size, faceColor) {
+
+      let isBlack = faceColor === "#111111";
+
+      stroke(isBlack ? "#FFFFFF" : "#111111");
+      strokeWeight(2);
+      fill(faceColor);
+
+      circle(0, 0, size);
+
+      // Eyes
+      noStroke();
+      fill(isBlack ? "#FFFFFF" : "#111111");
+
+      circle(
+        -size * 0.17,
+        -size * 0.12,
+        size * 0.09
       );
 
-      // SCALE: Change the size slightly
-      scale(pulse);
+      circle(
+        size * 0.17,
+        -size * 0.12,
+        size * 0.09
+      );
 
+      // Smile
       noFill();
-      stroke(arcColor);
-      strokeWeight(5);
+      stroke(isBlack ? "#FFFFFF" : "#111111");
+      strokeWeight(size * 0.055);
+      strokeCap(ROUND);
 
-      translate(-gridSize / 2, -gridSize / 2);
+      arc(
+        0,
+        size * 0.02,
+        size * 0.5,
+        size * 0.4,
+        0,
+        PI
+      );
+    }
 
-      // Draw nested quarter-circle arcs
-      for (let r = 10; r <= gridSize; r += 10) {
-        arc(
-          0, 0,
-          r * 2, r * 2,
-          0, HALF_PI
+    // Press S to save the design
+    function keyPressed() {
+      if (key === "s" || key === "S") {
+        saveCanvas(
+          "dynamic-optical-pattern",
+          "png"
         );
       }
-
-      pop();
-    }
-  }
-
-  // FLOATING SMILEY FACES
-  for (let smiley of smileys) {
-
-    smiley.x += smiley.speedX;
-    smiley.y += smiley.speedY;
-
-    let bob = sin(
-      frameCount * 0.025 + smiley.phase
-    ) * 8;
-
-    // Wrap around the canvas
-    if (smiley.x < -smiley.size) {
-      smiley.x = width + smiley.size;
     }
 
-    if (smiley.x > width + smiley.size) {
-      smiley.x = -smiley.size;
-    }
-
-    if (smiley.y < -smiley.size) {
-      smiley.y = height + smiley.size;
-    }
-
-    if (smiley.y > height + smiley.size) {
-      smiley.y = -smiley.size;
-    }
-
-    push();
-
-    translate(smiley.x, smiley.y + bob);
-
-    // Gently rotate smiley faces
-    rotate(
-      sin(frameCount * 0.01 + smiley.phase) * 0.2
-    );
-
-    drawSmiley(smiley.size, smiley.color);
-
-    pop();
-  }
-}
-
-// DRAW SMILEY FACE
-function drawSmiley(size, faceColor) {
-
-  let isBlack = faceColor === "#111111";
-
-  stroke(isBlack ? "#FFFFFF" : "#111111");
-  strokeWeight(2);
-  fill(faceColor);
-
-  circle(0, 0, size);
-
-  // Eyes
-  noStroke();
-  fill(isBlack ? "#FFFFFF" : "#111111");
-
-  circle(
-    -size * 0.17,
-    -size * 0.12,
-    size * 0.09
-  );
-
-  circle(
-    size * 0.17,
-    -size * 0.12,
-    size * 0.09
-  );
-
-  // Smile
-  noFill();
-  stroke(isBlack ? "#FFFFFF" : "#111111");
-  strokeWeight(size * 0.055);
-  strokeCap(ROUND);
-
-  arc(
-    0,
-    size * 0.02,
-    size * 0.5,
-    size * 0.4,
-    0,
-    PI
-  );
-}
-
-// SAVE DESIGN
-function keyPressed() {
-  if (key === "s" || key === "S") {
-    saveCanvas("dynamic-optical-pattern", "png");
-  }
-}
-
-</script>
+  </script>
 
 </body>
 </html>
 
 
-
-/* =====================================
-   CREATIVE CODING HEADER
-===================================== */
-
-.creative-coding-header {
-  width: 100%;
-  min-height: 105px;
-  padding: 0 3%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-  background: #f8f8f6;
-  border-bottom: 1px solid #dedede;
-  box-sizing: border-box;
-}
-
-/* LEFT TITLE */
-
-.creative-coding-logo {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 25px;
-  font-weight: 800;
-  letter-spacing: -0.7px;
-  color: #111;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-/* RIGHT NAVIGATION */
-
-.creative-coding-nav {
-  display: flex;
-  align-items: center;
-  gap: 48px;
-}
-
-/* NAVIGATION LINKS */
-
-.creative-nav-link {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 17px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #111;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color 0.2s ease;
-}
-
-/* ACTIVE LINK */
-
-.creative-nav-link.active {
-  color: #e31820;
-}
-
-/* HOVER */
-
-.creative-nav-link:hover {
-  color: #e31820;
-}
-
-/* =====================================
-   RESPONSIVE HEADER
-===================================== */
-
-@media (max-width: 700px) {
-
-  .creative-coding-header {
-    padding: 24px 5%;
-    min-height: auto;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-
-  .creative-coding-logo {
-    font-size: 22px;
-  }
-
-  .creative-coding-nav {
-    width: 100%;
-    gap: 25px;
-    flex-wrap: wrap;
-  }
-
-  .creative-nav-link {
-    font-size: 13px;
-    letter-spacing: 0.5px;
-  }
-
-}
