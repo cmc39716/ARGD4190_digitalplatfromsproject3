@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3-4 Data Sketch: My Week in Photos | Creative Coding</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@2/lib/p5.min.js"></script>
+  <script src="sketch.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f7f7f5;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #333;
+    }
+
+    /* HEADER */
+
+    .creative-coding-header {
+      width: 100%;
+      min-height: 105px;
+      padding: 25px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+      border-bottom: 1px solid #d9d9d9;
+      background: #f7f7f5;
+    }
+
+    .creative-coding-logo {
+      color: #111;
+      text-decoration: none;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+    }
+
+    .creative-coding-nav {
+      display: flex;
+      align-items: center;
+      gap: 35px;
+    }
+
+    .creative-nav-link {
+      color: #111;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      transition: color 0.2s ease;
+    }
+
+    .creative-nav-link:hover,
+    .creative-nav-link.active {
+      color: #d71920;
+    }
+
+    /* PAGE CONTENT */
+
+    .content {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    h1 { margin-bottom: 4px; }
+    h2 { margin-top: 36px; }
+    table { border-collapse: collapse; margin: 12px 0; background: #fff; }
+    td, th { border: 1px solid #ccc; padding: 6px 12px; text-align: left; }
+    th { background: #f4efe8; }
+    figure { margin: 12px 0; }
+    figure img { width: 100%; height: auto; border: 1px solid #ddd; border-radius: 6px; }
+    figcaption { font-size: 14px; color: #666; margin-top: 6px; }
+
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+      .creative-coding-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 25px 6%;
+        gap: 20px;
+      }
+
+      .creative-coding-logo {
+        font-size: 22px;
+      }
+
+      .creative-coding-nav {
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .creative-nav-link {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WEBSITE HEADER -->
+
+  <header class="creative-coding-header">
+
+    <a href="index.html" class="creative-coding-logo">
+      CREATIVE CODING
+    </a>
+
+    <nav class="creative-coding-nav">
+
+      <a href="index.html"
+         class="creative-nav-link">
+        OPTICAL PATTERN
+      </a>
+
+      <a href="selfportrait.html"
+         class="creative-nav-link">
+        SELF PORTRAIT
+      </a>
+
+      <a href="Generativedesign.html"
+         class="creative-nav-link">
+        GENERATIVE DESIGN
+      </a>
+
+      <a href="datasketch.html"
+         class="creative-nav-link active">
+        DATA SKETCH
+      </a>
+
+    </nav>
+
+  </header>
+
+  <div class="content">
+    <h1>My Week in Photos</h1>
+    <p>A data sketch of the photos I took over one week: how many, of what, and how I felt.</p>
+
+    <h2>The sketch</h2>
+    <main></main>
+
+    <h2>How to read it</h2>
+    <p>Every circle is one day.</p>
+    <table>
+      <tr><th>Data</th><th>Visual channel</th><th>How</th></tr>
+      <tr><td>Day</td><td>x position</td><td>Left to right, Monday to Sunday</td></tr>
+      <tr><td>Mood</td><td>y position</td><td>Low energy at the bottom (Relaxed, Calm, Happy, Energetic, Excited, Hectic at the top)</td></tr>
+      <tr><td>Photos</td><td>Circle area</td><td>Bigger circle = more photos. A square-root scale keeps area proportional, so Saturday's 382 photos don't swallow the small days.</td></tr>
+      <tr><td>Subject</td><td>Color</td><td>Gray-brown = everyday life, orange = sports, pink = friends, green = nature, blue = my dog</td></tr>
+    </table>
+
+    <h2>My pen-and-paper design</h2>
+    <figure>
+      <img src="my-sketch.jpg" alt="Hand-drawn sketch of the design: days along the bottom, mood from Relaxed to Hectic up the side, circles sized by number of photos and labeled with their color.">
+      <figcaption>My hand-drawn design, made before coding. Day maps to x position, mood to y position, number of photos to circle size, and subject to color.</figcaption>
+    </figure>
+
+  </div>
+
+</body>
+</html>

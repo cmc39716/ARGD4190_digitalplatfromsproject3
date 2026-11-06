@@ -1,0 +1,15 @@
+{
+  "title": "My Week in Photos",
+  "days": [
+    { "day": "Monday",    "photos": 12,  "subject": "Everyday life", "mood": "Calm" },
+    { "day": "Tuesday",   "photos": 25,  "subject": "Sports",        "mood": "Excited" },
+    { "day": "Wednesday", "photos": 32,  "subject": "Sports",        "mood": "Calm" },
+    { "day": "Thursday",  "photos": 8,   "subject": "Friends",       "mood": "Energetic" },
+    { "day": "Friday",    "photos": 29,  "subject": "Nature",        "mood": "Happy" },
+    { "day": "Saturday",  "photos": 382, "subject": "Sports",        "mood": "Hectic" },
+    { "day": "Sunday",    "photos": 10,  "subject": "My dog",        "mood": "Relaxed" }
+  ]
+}
+
+
+
