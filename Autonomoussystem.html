@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Autonomous System | Creative Coding</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.11/p5.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f7f7f5;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #333;
+    }
+
+    /* HEADER */
+
+    .creative-coding-header {
+      width: 100%;
+      min-height: 105px;
+      padding: 25px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+      border-bottom: 1px solid #d9d9d9;
+      background: #f7f7f5;
+    }
+
+    .creative-coding-logo {
+      color: #111;
+      text-decoration: none;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+    }
+
+    .creative-coding-nav {
+      display: flex;
+      align-items: center;
+      gap: 35px;
+    }
+
+    .creative-nav-link {
+      color: #111;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      transition: color 0.2s ease;
+    }
+
+    .creative-nav-link:hover,
+    .creative-nav-link.active {
+      color: #d71920;
+    }
+
+    /* PIECE */
+
+    .generative-page {
+      width: 100%;
+      padding: 55px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #pattern-container {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    #pattern-container canvas {
+      display: block;
+      width: 100% !important;
+      height: auto !important;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+      cursor: pointer;
+    }
+
+    .controls {
+      margin-top: 18px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: #111;
+      text-align: center;
+    }
+
+    .controls span {
+      color: #d71920;
+    }
+
+    .notes {
+      width: 100%;
+      max-width: 800px;
+      margin: 40px auto 90px;
+      padding: 0 20px;
+      line-height: 1.6;
+    }
+
+    .notes h2 {
+      font-size: 16px;
+      letter-spacing: 1.2px;
+      margin-bottom: 8px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+      .creative-coding-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 25px 6%;
+        gap: 20px;
+      }
+
+      .creative-coding-logo {
+        font-size: 22px;
+      }
+
+      .creative-coding-nav {
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .creative-nav-link {
+        font-size: 11px;
+      }
+
+      .generative-page {
+        padding: 30px 12px 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- WEBSITE HEADER -->
+
+  <header class="creative-coding-header">
+
+    <a href="index.html" class="creative-coding-logo">
+      CREATIVE CODING
+    </a>
+
+    <nav class="creative-coding-nav">
+
+      <a href="index.html"
+         class="creative-nav-link">
+        OPTICAL PATTERN
+      </a>
+
+      <a href="selfportrait.html"
+         class="creative-nav-link">
+        SELF PORTRAIT
+      </a>
+
+      <a href="Generativedesign.html"
+         class="creative-nav-link">
+        GENERATIVE DESIGN
+      </a>
+
+      <a href="Autonomoussystem.html"
+         class="creative-nav-link active">
+        AUTONOMOUS SYSTEM
+      </a>
+
+      <a href="datasketch.html"
+         class="creative-nav-link">
+        DATA SKETCH
+      </a>
+
+    </nav>
+
+  </header>
+
+  <!-- GENERATIVE PIECE -->
+
+  <main class="generative-page">
+    <div id="pattern-container"></div>
+    <div class="controls">
+      <span>CLICK</span> NEW DRAWING &nbsp;&nbsp;|&nbsp;&nbsp; <span>S</span> SAVE PNG
+    </div>
+  </main>
+
+  <section class="notes">
+    <h2>HOW IT WORKS</h2>
+    <p>
+      Hundreds of particles drift across the canvas and leave thin trails.
+      A smooth <code>noise()</code> field decides which way each particle turns,
+      so the trails flow like currents. Each time you click, the noise field gets
+      a new seed, a new scale and a new amount of swirl, so every drawing has a
+      different flow.
+    </p>
+    <p>
+      <code>random()</code> adds the jumpy decisions: which palette color a particle
+      gets (mostly black, some red, a little gray), how thick and how transparent its
+      line is, how long it lives, and when it stops to stamp a nested quarter-arc.
+      Those arcs come from my optical pattern piece, so the two pages share a
+      visual language. The drawing builds up for a few seconds and then freezes.
+    </p>
+    <p>
+      Rules: particles array and loops, <code>mousePressed()</code> starts a new drawing,
+      <code>keyPressed()</code> saves it with <code>saveCanvas()</code>.
+      The flow-field technique is a common generative art approach; this code is my own.
+    </p>
+  </section>
+
+  <script>
+
+    const PALETTE = [
+      { hex: "#111111", weight: 0.55 },
+      { hex: "#D71920", weight: 0.35 },
+      { hex: "#9a9a96", weight: 0.10 }
+    ];
+
+    const BG = "#f7f7f5";
+    const NUM_PARTICLES = 350;
+    const MAX_AGE = 1500;       // frames before the drawing freezes
+
+    let particles = [];
+    let age = 0;
+    let fieldScale;             // how zoomed-in the noise field is
+    let swirl;                  // how many turns the flow can make
+    let speed;
+
+    function setup() {
+      let canvas = createCanvas(800, 800);
+      canvas.parent("pattern-container");
+      newDrawing();
+    }
+
+    function newDrawing() {
+      noiseSeed(floor(random(1000000)));
+      background(BG);
+
+      fieldScale = random(0.0015, 0.005);
+      swirl = random(1, 3);
+      speed = random(1.2, 2.4);
+      age = 0;
+
+      particles = [];
+      for (let i = 0; i < NUM_PARTICLES; i++) {
+        particles.push(makeParticle());
+      }
+
+      loop();
+    }
+
+    function makeParticle() {
+      return {
+        x: random(width),
+        y: random(height),
+        px: null,
+        py: null,
+        life: random(150, 500),
+        w: random(0.5, 2.5),
+        col: pickColor(random(40, 140))
+      };
+    }
+
+    function pickColor(alpha) {
+      let r = random();
+      let total = 0;
+      let hex = PALETTE[0].hex;
+
+      for (let p of PALETTE) {
+        total += p.weight;
+        if (r <= total) {
+          hex = p.hex;
+          break;
+        }
+      }
+
+      let c = color(hex);
+      c.setAlpha(alpha);
+      return c;
+    }
+
+    function draw() {
+
+      for (let p of particles) {
+
+        // Smooth decision: noise picks the direction
+        let angle = noise(
+          p.x * fieldScale,
+          p.y * fieldScale,
+          age * 0.0008
+        ) * TWO_PI * swirl;
+
+        p.px = p.x;
+        p.py = p.y;
+        p.x += cos(angle) * speed;
+        p.y += sin(angle) * speed;
+
+        // Line thickness breathes with noise
+        let thick = p.w * (0.6 + noise(p.x * 0.01, p.y * 0.01));
+
+        stroke(p.col);
+        strokeWeight(thick);
+        line(p.px, p.py, p.x, p.y);
+
+        // Jumpy decision: sometimes stop and stamp a nested arc
+        if (random() < 0.0004) {
+          drawArcStamp(p.x, p.y);
+        }
+
+        p.life--;
+
+        let offscreen =
+          p.x < -20 || p.x > width + 20 ||
+          p.y < -20 || p.y > height + 20;
+
+        if (p.life <= 0 || offscreen) {
+          Object.assign(p, makeParticle());
+        }
+      }
+
+      age++;
+
+      if (age > MAX_AGE) {
+        noLoop();
+      }
+    }
+
+    function drawArcStamp(x, y) {
+      let size = random(40, 140);
+      let stamp = pickColor(random(120, 220));
+
+      push();
+      translate(x, y);
+      rotate(floor(random(4)) * HALF_PI);
+
+      noFill();
+      stroke(stamp);
+      strokeWeight(2);
+
+      for (let r = 8; r <= size; r += 8) {
+        arc(0, 0, r * 2, r * 2, 0, HALF_PI);
+      }
+
+      pop();
+    }
+
+    // Click the canvas for a brand-new drawing
+    function mousePressed() {
+      if (mouseX >= 0 && mouseX <= width &&
+          mouseY >= 0 && mouseY <= height) {
+        newDrawing();
+      }
+    }
+
+    // Press S to save the drawing
+    function keyPressed() {
+      if (key === "s" || key === "S") {
+        saveCanvas("generative-design", "png");
+      }
+    }
+
+  </script>
+
+</body>
+</html>
